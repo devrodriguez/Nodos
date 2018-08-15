@@ -1,6 +1,8 @@
-let node = function() {
-    this.name = null;
-    this.value = 0;
+let node = function(value, right, left) {
+    //this.id = id;
+    this.right = right;
+    this.left = left;
+    this.value = value;
 }
 
 module.exports = node;
