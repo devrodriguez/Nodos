@@ -2,12 +2,23 @@ var express = require('express');
 var router = express.Router();
 var nodeModel = require('../../models/node');
 
-router.get('/ancestor', function(req, res, next) {
-    return res.json({});
+router.post('/ancestor', function(req, res, next) {
+    
+    // Get tree
+    let tree = req.body.tree;
+    let n1 = req.body.n1;
+    let n2 = req.body.n2;
+    let ancestor = null;
+
+    ancestor = FindLCA(tree, n1, n2);
+
+    return res.json({
+        ancestor: ancestor.value
+    });
 });
 
 router.post('/create', function(req, res, next) {
-    let treeNodes = req.body.treeData;
+    let treeNodes = req.body;
     let tree = new nodeModel(treeNodes[0][0], null, null);
 
     treeNodes.forEach(branch => {
@@ -17,41 +28,41 @@ router.post('/create', function(req, res, next) {
     return res.json(tree)
 });
 
-function BuildTreeNodes(node, branch, index) {
+function FindLCA(node, a1, a2) {
+    if(node == null)
+        return null;
 
+    if(node.value == a1 || node.value == a2)
+        return node;
+
+    let left_lca = FindLCA(node.left, a1, a2);
+    let right_lca = FindLCA(node.right, a1, a2);
+
+    if(left_lca != null && right_lca != null)
+        return node;
+
+    return (left_lca != null) ? left_lca : right_lca;
+}
+
+function BuildTreeNodes(node, branch, index) {
     if(index >= branch.length) {
         return;
-    }    
+    } 
 
-    if(node.right != null) {
-        if(node.right.value == branch[index]) {
-            if(node.right.left != null) {
-                index++;
-                BuildTreeNodes(node.right.left, branch, index);
-            }
-            else
-            {
-                index++;
-                node.right.left = new nodeModel(branch[index], null, null);
-                index++;
-                BuildTreeNodes(node.right.left, branch, index);
-            }
+    if(branch[index] > node.value) {
+        if(node.right == null){
+            node.right = new nodeModel(branch[index], null, null);
         }
-        else
-        {
-            if(index > 1)
-                index++;
-
-            node.left = new nodeModel(branch[index], null, null);
-            index++;
-            BuildTreeNodes(node.left, branch, index);
-        }
+        index++;
+        BuildTreeNodes(node.right, branch, index)
     }
     else
     {
-        node.right = new nodeModel(branch[index], null, null);
+        if(node.left == null){
+            node.left = new nodeModel(branch[index], null, null);
+        }
         index++;
-        BuildTreeNodes(node.right, branch, index);
+        BuildTreeNodes(node.left, branch, index)
     }
 }
 
