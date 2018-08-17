@@ -35,13 +35,13 @@ function FindLCA(node, a1, a2) {
     if(node.value == a1 || node.value == a2)
         return node;
 
-    let left_lca = FindLCA(node.left, a1, a2);
-    let right_lca = FindLCA(node.right, a1, a2);
+    let lfLca = FindLCA(node.left, a1, a2);
+    let rgLca = FindLCA(node.right, a1, a2);
 
-    if(left_lca != null && right_lca != null)
+    if(lfLca != null && rgLca != null)
         return node;
 
-    return (left_lca != null) ? left_lca : right_lca;
+    return (lfLca != null) ? lfLca : rgLca;
 }
 
 function BuildTreeNodes(node, branch, index) {

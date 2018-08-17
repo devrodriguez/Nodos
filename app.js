@@ -7,10 +7,13 @@ var cors = require('cors');
 
 // Routes
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var nodes = require('./routes/api/nodes')
+var nodesRouter = require('./routes/api/nodes');
+var nodeView = require('./routes/nodes')
 
 var app = express();
+
+// Static files
+app.use('/static', express.static('public'));
 
 // Allow-Origin
 app.use(cors());
@@ -26,8 +29,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/api/nodes', nodes);
+app.use('/api/nodes', nodesRouter);
+app.use('/nodes', nodeView);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
